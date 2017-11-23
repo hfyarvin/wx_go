@@ -4,6 +4,7 @@ import (
 	"crypto/sha1"
 	// "encoding/base64"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
@@ -11,6 +12,7 @@ import (
 	"net/http"
 	"sort"
 	"strings"
+	"time"
 )
 
 const (
@@ -48,7 +50,35 @@ func makeSignature(timestamp, nonce string) string {
 func WxPost(c *gin.Context) {
 	s, _ := ioutil.ReadAll(c.Request.Body)
 	fmt.Println(string(s))
-	c.JSON(200, "post ok")
+	type Ret struct {
+		XMLName xml.Name `xml:"xml"`
+		MsgType string `xml:"MsgType"`
+		Content string 	`xml:"Content"`
+		ToUserName string `xml:"ToUserName"`
+		CreateTime int64 `xml:"CreateTime"`
+		FromUserName string `xml:"FromUserName"`
+	}
+	result := new(Ret)
+	err := xml.Unmarshal(s,&result)
+	if err != nil {
+		fmt.Println("err:",err)
+	}
+	fmt.Println("result")
+	fmt.Println(result)
+	// err := json.Unmarshal(s,&result)
+	// if err != nil {
+	// 	fmt.Println("err:",err)
+	// }
+	// fmt.Println("result")
+	// fmt.Println(result)
+	r := new(Ret)
+	r.MsgType = result.MsgType
+	r.Content = "Hello"
+	r.CreateTime = time.Now().Unix()
+	r.FromUserName = result.ToUserName
+	r.ToUserName = result.FromUserName
+	obj := r
+	c.XML(200, obj)
 }
 
 func Test(c *gin.Context) {
@@ -64,7 +94,7 @@ func PayNotify(c *gin.Context) {
 func TokenGet(c *gin.Context) {
 	s, _ := ioutil.ReadAll(c.Request.Body)
 	fmt.Println(s)
-	res, err := http.Post("http://127.0.0.1:8000/billing/invoices/list?page=1", "application/x-www-form-urlencoded", strings.NewReader(""))
+	res, err := http.Post("http://127.0.0.1:8000/billing/invoices/list?page=2", "application/x-www-form-urlencoded", strings.NewReader(""))
 	if err != nil {
 		fmt.Println("post error", err)
 	}
@@ -80,4 +110,45 @@ func TokenGet(c *gin.Context) {
 		fmt.Println("transErr:", tranErr)
 	}
 	c.JSON(200, result)
+}
+
+func GetWxToekn(c *gin.Context){
+	// appId := "wx0ed3b325349ac4df"
+	// secret := ""
+	// url := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s",appId,secret)
+	// res, err := http.Get("http://127.0.0.1:8000/billing/invoices/list?page=2")
+	// if err != nil {
+	// 	fmt.Println("post error", err)
+	// }
+	// body, bErr := ioutil.ReadAll(res.Body)
+	// if bErr != nil {
+	// 	fmt.Println("body error", bErr)
+	// }
+	// fmt.Println(string(body))
+	// defer res.Body.Close()
+	// var result interface{}
+	// tranErr := json.Unmarshal(body, &result)
+	// if tranErr != nil {
+	// 	fmt.Println("transErr:", tranErr)
+	// }
+	// c.JSON(200, result)
+}
+
+func GetPostInfo(c *gin.Context)  {
+	s, _ := ioutil.ReadAll(c.Request.Body)
+	var result interface{}
+	tranErr := json.Unmarshal(s, &result)
+	if tranErr != nil {
+		fmt.Println(tranErr)
+	}
+	fmt.Println("==================Print Post Info============================================")
+	fmt.Println(result)
+	c.JSON(200,result)
+}
+
+func GetIndexPage(c *gin.Context) {
+	obj := gin.H{
+		"title": "Main",
+	}
+	c.HTML(http.StatusOK, "index.tmpl", obj)
 }
