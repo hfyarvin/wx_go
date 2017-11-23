@@ -57,6 +57,9 @@ func WxPost(c *gin.Context) {
 		ToUserName string `xml:"ToUserName"`
 		CreateTime int64 `xml:"CreateTime"`
 		FromUserName string `xml:"FromUserName"`
+		PicUrl string `xml:"PicUrl"`
+		MediaId string `xml:"MediaId"`
+		MsgId string `xml:"MsgId"`
 	}
 	result := new(Ret)
 	err := xml.Unmarshal(s,&result)
@@ -77,6 +80,9 @@ func WxPost(c *gin.Context) {
 	r.CreateTime = time.Now().Unix()
 	r.FromUserName = result.ToUserName
 	r.ToUserName = result.FromUserName
+	r.PicUrl = "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=4147765522,1884713051&fm=27&gp=0.jpg"
+	r.MediaId = result.MediaId
+	r.MsgId = result.MsgId
 	obj := r
 	c.XML(200, obj)
 }
