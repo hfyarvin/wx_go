@@ -88,3 +88,11 @@ func ShowClientInfo(c *gin.Context) {
 		c.JSON(403,"not ok")
 	}
 }
+
+func PaypalGet(c *gin.Context) {
+	c.JSON(200, "get ok")
+}
+
+func PaypalPost(c *gin.Context) {
+	c.JSON(200, "post ok")
+}

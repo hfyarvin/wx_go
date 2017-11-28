@@ -51,20 +51,20 @@ func WxPost(c *gin.Context) {
 	s, _ := ioutil.ReadAll(c.Request.Body)
 	fmt.Println(string(s))
 	type Ret struct {
-		XMLName xml.Name `xml:"xml"`
-		MsgType string `xml:"MsgType"`
-		Content string 	`xml:"Content"`
-		ToUserName string `xml:"ToUserName"`
-		CreateTime int64 `xml:"CreateTime"`
-		FromUserName string `xml:"FromUserName"`
-		PicUrl string `xml:"PicUrl"`
-		MediaId string `xml:"MediaId"`
-		MsgId string `xml:"MsgId"`
+		XMLName      xml.Name `xml:"xml"`
+		MsgType      string   `xml:"MsgType"`
+		Content      string   `xml:"Content"`
+		ToUserName   string   `xml:"ToUserName"`
+		CreateTime   int64    `xml:"CreateTime"`
+		FromUserName string   `xml:"FromUserName"`
+		PicUrl       string   `xml:"PicUrl"`
+		MediaId      string   `xml:"MediaId"`
+		MsgId        string   `xml:"MsgId"`
 	}
 	result := new(Ret)
-	err := xml.Unmarshal(s,&result)
+	err := xml.Unmarshal(s, &result)
 	if err != nil {
-		fmt.Println("err:",err)
+		fmt.Println("err:", err)
 	}
 	fmt.Println("result")
 	fmt.Println(result)
@@ -118,7 +118,7 @@ func TokenGet(c *gin.Context) {
 	c.JSON(200, result)
 }
 
-func GetWxToekn(c *gin.Context){
+func GetWxToekn(c *gin.Context) {
 	// appId := "wx0ed3b325349ac4df"
 	// secret := ""
 	// url := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s",appId,secret)
@@ -140,7 +140,7 @@ func GetWxToekn(c *gin.Context){
 	// c.JSON(200, result)
 }
 
-func GetPostInfo(c *gin.Context)  {
+func GetPostInfo(c *gin.Context) {
 	s, _ := ioutil.ReadAll(c.Request.Body)
 	var result interface{}
 	tranErr := json.Unmarshal(s, &result)
@@ -149,7 +149,7 @@ func GetPostInfo(c *gin.Context)  {
 	}
 	fmt.Println("==================Print Post Info============================================")
 	fmt.Println(result)
-	c.JSON(200,result)
+	c.JSON(200, result)
 }
 
 func GetIndexPage(c *gin.Context) {
@@ -157,4 +157,11 @@ func GetIndexPage(c *gin.Context) {
 		"title": "Main",
 	}
 	c.HTML(http.StatusOK, "index.tmpl", obj)
+}
+
+func GetUploadPage(c *gin.Context) {
+	obj := gin.H{
+		"title": "Main",
+	}
+	c.HTML(http.StatusOK, "upload.tmpl", obj)
 }
