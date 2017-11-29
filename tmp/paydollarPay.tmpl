@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>支付跳转页面</title>
+</head>
+<body>
+	<form name="payFormCcard" method="post" action="https://test.paydollar.com/b2cDemo/eng/payment/payForm.jsp">
+		<input type="hidden" name="merchantId" value="1">
+		<input type="hidden" name="amount" value="3000.0">
+		<input type="hidden" name="orderRef" value="RG20171129rgth">
+		<input type="hidden" name="currCode" value="344">
+		<input type="hidden" name="mpsMode" value="NIL">
+		<input type="hidden" name="successUrl" value="http://arvin-wong.natapp1.cc/paydollar/success">
+		<input type="hidden" name="failUrl" value="http://arvin-wong.natapp1.cc/paydollar/fail">
+		<input type="hidden" name="cancelUrl" value="http://arvin-wong.natapp1.cc/paydollar/cancel">
+		<input type="hidden" name="payType" value="N">
+		<input type="hidden" name="lang" value="C">
+		<input type="hidden" name="payMehtod" value="ALL">
+		<input type="submit" name="submit">	
+	</form>
+</body>
+</html>

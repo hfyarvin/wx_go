@@ -29,6 +29,7 @@ func Init(r *gin.Engine) {
 		paypalGroup.POST("/", pay_controllers.PaypalPost)
 		paypalGroup.GET("/new/client", pay_controllers.ShowClientInfo) //had changed
 		paypalGroup.POST("/direct/payment", pay_controllers.DirectPaypalPaymentTest)
+		paypalGroup.GET("/index", pay_controllers.GetPaypalIndexPage)
 	}
 
 	r.GET("/index", controllers.GetIndexPage)
@@ -48,6 +49,15 @@ func Init(r *gin.Engine) {
 	mailGroup := r.Group("/mail")
 	{
 		mailGroup.GET("/", mail_controllers.SentEmail)
+	}
+
+	//paydollar
+	paydollarGroup := r.Group("paydollar")
+	{
+		paydollarGroup.GET("/index", pay_controllers.GetPaydollarIndexPage)
+		paydollarGroup.GET("/cancel", pay_controllers.CancelPaydollar)
+		paydollarGroup.GET("/success", pay_controllers.SuccessPaydollar)
+		paydollarGroup.GET("/fail", pay_controllers.FailPaydollar)
 	}
 }
 

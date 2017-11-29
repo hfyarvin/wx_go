@@ -28,23 +28,32 @@ func UploadTest(c *gin.Context) {
 	fmt.Println("---------------- request method", c.Request.Method, "----------------")
 	r := c.Request
 	if r.Method == "POST" {
-		r.ParseMultipartForm(32 << 20)
-		file, handler, err := r.FormFile("uploadfile")
-		if err != nil {
-			fmt.Println("FormFile Error:", err)
-			return
-		}
-		defer file.Close()
-		// fmt.Fprintf(w, "%v", handler.Header)
-		f, err := os.OpenFile("./tmp/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666) // 此处假设当前目录下已存在test目录
-		if err != nil {
-			fmt.Println("Open File Error:", err)
-			return
-		}
-		defer f.Close()
-		io.Copy(f, file)
-		c.JSON(200, handler.Header)
+		err := DownlinkFile(r, "uploadfile")
+		err2 := DownlinkFile(r, "uploadfile2")
+		c.JSON(200, gin.H{
+			"Err":  err,
+			"Err2": err2,
+		})
 	} else {
 		c.JSON(200, "ok")
 	}
+}
+
+func DownlinkFile(r *http.Request, fileUrl string) error {
+	r.ParseMultipartForm(32 << 20)
+	file, handler, err := r.FormFile(fileUrl)
+	if err != nil {
+		fmt.Println("FormFile Error:", err)
+		return err
+	}
+	defer file.Close()
+	// fmt.Fprintf(w, "%v", handler.Header)
+	f, err := os.OpenFile("./tmp/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666) // 此处假设当前目录下已存在test目录
+	if err != nil {
+		fmt.Println("Open File Error:", err)
+		return err
+	}
+	defer f.Close()
+	io.Copy(f, file)
+	return nil
 }
