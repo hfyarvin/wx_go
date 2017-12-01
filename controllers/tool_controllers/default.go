@@ -1,6 +1,7 @@
 package tool_controllers
 
 import (
+	"../../lib/tool"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -18,4 +19,15 @@ func GetRedirectUrl(c *gin.Context) {
 	// c.Redirect(http.StatusMovedPermanently, "http://www.baidu.com/")
 	time.Sleep(5 * time.Second)
 	c.JSON(http.StatusOK, "ok")
+}
+
+func Base64Test(c *gin.Context) {
+	str := "uploadfile"
+	encodeStr := tool.EncodeBase64(str)
+	decodeStr := tool.DecodeBase64(encodeStr)
+	obj := gin.H{
+		"encode": encodeStr,
+		"decode": decodeStr,
+	}
+	c.JSON(200, obj)
 }

@@ -75,6 +75,7 @@ func Init(r *gin.Engine) {
 	toolGroup.Use(middler.LogTime())
 	{
 		toolGroup.GET("/redirect_url", tool_controllers.GetRedirectUrl)
+		toolGroup.GET("/base64/test", tool_controllers.Base64Test)
 	}
 }
 
