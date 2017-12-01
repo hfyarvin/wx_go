@@ -1,9 +1,9 @@
 <html>
 <head>
-	<title>上传文件</title>
+	<title>上传多个文件</title>
 </head>
 <body>
-<form enctype="multipart/form-data" action="/file/upload/one" method="post">
+<form enctype="multipart/form-data" action="/file/upload/multiple" method="post">
   <input type="file" name="uploadfile" /><br>
   <input type="file" name="uploadfile2" />
   <input type="hidden" name="token" value="{{.}}"/>

@@ -5,7 +5,9 @@ import (
 	"../controllers/file_controllers"
 	"../controllers/mail_controllers"
 	"../controllers/pay_controllers"
+	"../controllers/tool_controllers"
 	"../controllers/wx_controllers"
+	"../middler"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,8 +30,13 @@ func Init(r *gin.Engine) {
 		paypalGroup.GET("/", pay_controllers.PaypalGet)
 		paypalGroup.POST("/", pay_controllers.PaypalPost)
 		paypalGroup.GET("/new/client", pay_controllers.ShowClientInfo) //had changed
-		paypalGroup.POST("/direct/payment", pay_controllers.DirectPaypalPaymentTest)
+		paypalGroup.GET("/direct/payment", pay_controllers.DirectPaypalPaymentTest)
+		paypalGroup.GET("/custom/payment", pay_controllers.CreateCustomPayment)
 		paypalGroup.GET("/index", pay_controllers.GetPaypalIndexPage)
+		buttonGroup := paypalGroup.Group("/button")
+		{
+			buttonGroup.GET("/create", pay_controllers.PaypalButtonIndex)
+		}
 	}
 
 	r.GET("/index", controllers.GetIndexPage)
@@ -42,7 +49,11 @@ func Init(r *gin.Engine) {
 	//上传附件
 	fileGroup := r.Group("/file")
 	{
+		fileGroup.GET("/upload", controllers.GetUploadPage)
 		fileGroup.POST("/single/upload", file_controllers.UploadSingleFile)
+		fileGroup.POST("/upload/one", file_controllers.UploadOneFile)
+		fileGroup.POST("/upload/multiple", file_controllers.UploadMultipleFiles)
+		fileGroup.GET("/upload/multiple/page", file_controllers.UploadMultipleFilesPage)
 	}
 
 	//邮件
@@ -58,6 +69,12 @@ func Init(r *gin.Engine) {
 		paydollarGroup.GET("/cancel", pay_controllers.CancelPaydollar)
 		paydollarGroup.GET("/success", pay_controllers.SuccessPaydollar)
 		paydollarGroup.GET("/fail", pay_controllers.FailPaydollar)
+	}
+	//重定向
+	toolGroup := r.Group("/tool")
+	toolGroup.Use(middler.LogTime())
+	{
+		toolGroup.GET("/redirect_url", tool_controllers.GetRedirectUrl)
 	}
 }
 

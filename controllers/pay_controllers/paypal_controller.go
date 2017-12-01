@@ -12,9 +12,9 @@ const (
 	live_account     = "hfyarvin@gmail.com"
 	access_token     = "access_token$production$rvfnyxz95j4kmsrh$1c086825b9952b82f797ea3c6128b856"
 	expiry_date      = "22 Nov 2027"
-	SANDBOX_ACCOUNT  = "hfyarvin-facilitator@gmail.com"
-	SANDBOX_CLIENTID = "AW_AhlQXzMYg4Qtb3kkXnS69k5ZL1MYJBq0Prkv79f7FoIytq_oXYxoGhLwjOuvTuRIMM-UmTMdFpFD8"
-	SANDBOX_SECRET   = "EAZqkGEHyp16kgaFU6UouZC8KFJesS0pyYtcyEU-M6F-1nnXz1Q-q648tgvWyR8C99GU5KU3XpF0Qyhz"
+	SANDBOX_ACCOUNT  = "982073560.wong@qq.com"
+	SANDBOX_CLIENTID = "ATtwdeAOKDgyonrn6iQ2l0B_v8fRvYn1qDoJldPmGjlaGPNnLSCaSR2xlUtDEAYreltdtUR7boglX0NR"
+	SANDBOX_SECRET   = "EHEtF6rBt_CO9X-45uLnTHyANLVYKBhnbcPaTYZ9FiJrX8njdDerjC8Z4Z8ADHckQlnNKf2yXydr4KBV"
 )
 
 var (
@@ -22,71 +22,61 @@ var (
 		"refresh_token": "",
 		"access_token":  "A21AAGnMjmDtDHOqAz1riJ4bdXu9uQmYnw1bF2iSpgcQmpFOkJ2_UnF24Dg0jgwYiC60yZEABPAMobhhkYYeFnSJj8-jiQD3Q",
 		"token_type":    "Bearer",
-		"expires_in":    32382,
+		"expires_in":    32382, //过期时间
 	}
 )
 
 func GetNewClient() *paypal.Client {
-	fmt.Println(MY_ACCESS_TOKEN["expires_in"])
-	fmt.Println("==================Func Get new Client============================================")
+	fmt.Println("==============Get New Client==================")
 	clientId := SANDBOX_CLIENTID
 	secret := SANDBOX_SECRET
-	fmt.Println("==================Func create new Client============================================")
 	client, err := paypal.NewClient(clientId, secret, paypal.APIBaseSandBox)
 	if err != nil {
+		return nil
 		fmt.Println("======create client err:=====", err)
 	}
-	fmt.Println(client.Token)
 	client.SetLog(os.Stdout)
-	fmt.Println("==================Func Get Access Token============================================")
-	accessToken, err := client.GetAccessToken()
+	//再次获取token
+	_, err = client.GetAccessToken()
 	if err != nil {
+		return nil
 		fmt.Println("=====access token err:=====", err)
 	}
-	fmt.Println("==================Print Access Token============================================")
-	fmt.Println(accessToken.Token)
-	fmt.Println(MY_ACCESS_TOKEN["access_token"])
-	// c.JSON(200, accessToken)
 	return client
 }
 
+//获取刚创建的客户端的信息
+func ShowClientInfo(c *gin.Context) {
+	client := GetNewClient()
+	if client != nil {
+		obj := gin.H{
+			"api_base":  client.APIBase,
+			"client_id": client.ClientID,
+			"secret":    client.Secret,
+			"token":     client.Token,
+		}
+		c.JSON(200, obj)
+	} else {
+		c.JSON(403, "not ok")
+	}
+}
 func DirectPaypalPaymentTest(c *gin.Context) {
 	client := GetNewClient()
 	if client == nil {
-		c.JSON(200, "not ok")
+		c.JSON(200, "client is nil")
 	} else {
 		amount := paypal.Amount{
 			Total:    "1.00",
 			Currency: "USD",
 		}
-		redirectURL := "http://arvin-wong.natapp1.cc/default/post/info"
-		cancelURL := "http://arvin-wong.natapp1.cc/default/post/info"
+		redirectURL := "http://arvin-wong.natapp1.cc/paydollar/success"
+		cancelURL := "http://arvin-wong.natapp1.cc/paydollar/cancel"
 		desc := "Description for this direct paypal payment"
 		paymentRes, err := client.CreateDirectPaypalPayment(amount, redirectURL, cancelURL, desc)
 		if err != nil {
 			fmt.Println("payments Result Error:", err)
 		}
 		c.JSON(200, paymentRes)
-	}
-}
-
-func ShowClientInfo(c *gin.Context) {
-	client := GetNewClient()
-	if client != nil {
-		obj := gin.H{
-			// ClientID
-			// Secret         string
-			// APIBase        string
-			// Token          *TokenResponse
-			// tokenExpiresAt time.Time
-			"client_id": client.ClientID,
-			"secret":    client.Secret,
-			"api_base":  client.APIBase,
-			"token":     client.Token,
-		}
-		c.JSON(200, obj)
-	} else {
-		c.JSON(403, "not ok")
 	}
 }
 
@@ -103,4 +93,43 @@ func GetPaypalIndexPage(c *gin.Context) {
 		"title": "Main",
 	}
 	c.HTML(http.StatusOK, "paypal.tmpl", obj)
+}
+
+func CreateCustomPayment(c *gin.Context) {
+	client := GetNewClient()
+	p := paypal.Payment{
+		Intent: "sale",
+		Payer: &paypal.Payer{
+			PaymentMethod: "credit_card",
+			FundingInstruments: []paypal.FundingInstrument{paypal.FundingInstrument{
+				//信用卡信息
+				CreditCard: &paypal.CreditCard{
+					Number:      "4111111111111111",
+					Type:        "visa",
+					ExpireMonth: "11",
+					ExpireYear:  "2020",
+					CVV2:        "777",
+					FirstName:   "John",
+					LastName:    "Doe",
+				},
+			}},
+		},
+		Transactions: []paypal.Transaction{paypal.Transaction{
+			Amount: &paypal.Amount{
+				Currency: "USD",
+				Total:    "7.00",
+			},
+			Description: "My Payment",
+		}},
+		RedirectURLs: &paypal.RedirectURLs{
+			ReturnURL: "http://arvin-wong.natapp1.cc/paydollar/success",
+			CancelURL: "http://arvin-wong.natapp1.cc/paydollar/cancel",
+		},
+	}
+	paymentResponse, err := client.CreatePayment(p)
+	if err != nil {
+		c.JSON(200, "the pay is failed")
+	} else {
+		c.JSON(200, paymentResponse.Payment)
+	}
 }
