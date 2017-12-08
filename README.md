@@ -17,3 +17,21 @@
 - openssl ecparam -genkey -name secp384r1 -out server.key
 - 自签名公匙
 - openssl req -new -x509 -sha256 -key server.key -out server.pem -days 3650
+- go get github.com/syndtr/goleveldb/leveldb/cache
+- git clone https://github.com/syndtr/goleveldb.git
+
+### devkit下载
+- ruby dk.rb init
+- ruby dk.rb install
+- gem install rdiscount --platform=ruby
+
+### paypal对接事宜
+- return_url, notify_url
+- 
+- 
+- 
+
+## docker
+### docker-compose
+- docker-compose up
+- docker-compose start
