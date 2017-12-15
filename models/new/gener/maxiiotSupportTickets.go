@@ -1,10 +1,9 @@
 package gener
 
 import (
+	"../../common"
 	"fmt"
-	"github.com/maxiiot/LoRaWan/common"
 	log "github.com/sirupsen/logrus"
-	"net/http"
 	"time"
 )
 
@@ -17,7 +16,7 @@ type MaxiiotSupportTickets struct {
 	UserId           int64     `xorm:"user_id not null BIGINT(20)"`
 	Department       string    `xorm:"department not null VARCHAR(100)"`
 	Subject          string    `xorm:"subject VARCHAR(255)"`
-	Status           int       `xorm:"status TINYINT(1)"`
+	Status           string    `xorm:"status VARCHAR(255)"`
 	RelatedServiceId int64     `xorm:"related_service_id BIGINT(20)"`
 	Priority         int       `xorm:"priority TINYINT(1)"`
 	Message          string    `xorm:"message TEXT"`
@@ -125,21 +124,17 @@ func GetMaxiiotSupportTicketsBySql(sql string) []*MaxiiotSupportTickets {
 package ****_controller
 
 import (
-	"github.com/maxiiot/LoRaWan/models/****_model"
-	"net/http"
-	"github.com/maxiiot/LoRaWan/controllers"
+	"../../models/****_model"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
-
 //创建数据表
 func CreateMaxiiotSupportTicketsTable(c *gin.Context) {
 	err := new(****_model.MaxiiotSupportTickets).CreateTable()
-	obj := gin.H{
+	c.JSON(200, gin.H{
 		"error": err,
-	}
-	controllers.ResponseJSON(c, http.StatusOK, "sucess", obj)
+	})
 }
 //获取列表
 func GetMaxiiotSupportTicketsList(c *gin.Context) {
@@ -151,109 +146,19 @@ func GetMaxiiotSupportTicketsList(c *gin.Context) {
 		"list":       list,
 		"list_count": count,
 	}
-	controllers.ResponseJSON(c, http.StatusOK, "sucess", obj)
+	c.JSON(200, obj)
 }
-
 //获取单条数据
 func GetMaxiiotSupportTicketsById(c *gin.Context) {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-	obj := ****_model.GetMaxiiotSupportTicketsById(id)
-	controllers.ResponseJSON(c, http.StatusOK, "sucess", obj)
+	item := ****_model.GetMaxiiotSupportTicketsById(id)
+	c.JSON(200, item)
 }
 
 //创建数据
 func CreateMaxiiotSupportTickets(c *gin.Context) {
 	item := new(****_model.MaxiiotSupportTickets)
 	obj := item.Create()
-	controllers.ResponseJSON(c, http.StatusOK, "sucess", obj)
+	c.JSON(200, obj)
 }
-
-    "/list": {
-      "get": {
-        "summary": "获取列表",
-        "operationId": "MaxiiotSupportTicketsList",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/apiEmptyResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-              "description":"列表页序号.",
-              "format":"int32",
-              "in":"query",
-              "name":"page",
-              "required":false,
-              "type":"integer"
-          },
-          {
-              "description":"每页展示数量.",
-              "format":"int32",
-              "in":"query",
-              "name":"per_page",
-              "required":false,
-              "type":"integer"
-          }
-        ],
-        "tags": [
-          "Support"
-        ]
-      }
-    },
-    "/id/{id}": {
-      "get": {
-        "summary": "获取单个服务单",
-        "operationId": "GetMaxiiotSupportTicketsById",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/apiEmptyResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-              "format":"int64",
-              "in":"path",
-              "name":"id",
-              "required":true,
-              "type":"string"
-          }
-        ],
-        "tags": [
-          ".."
-        ]
-      }
-    },
-    "/new": {
-      "post": {
-        "summary": "创建新服务单",
-        "operationId": "CreateMaxiiotSupportTickets",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/apiEmptyResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/apiEmptyRequest"
-            }
-          }
-        ],
-        "tags": [
-          "***"
-        ]
-      }
-    }
 */

@@ -1,10 +1,9 @@
 package gener
 
 import (
+	"../../common"
 	"fmt"
-	"github.com/maxiiot/LoRaWan/common"
 	log "github.com/sirupsen/logrus"
-	"net/http"
 	"time"
 )
 
@@ -118,21 +117,17 @@ func GetMaxiiotSupportArticleCatsBySql(sql string) []*MaxiiotSupportArticleCats 
 package ****_controller
 
 import (
-	"github.com/maxiiot/LoRaWan/models/****_model"
-	"net/http"
-	"github.com/maxiiot/LoRaWan/controllers"
+	"../../models/****_model"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
-
 //创建数据表
 func CreateMaxiiotSupportArticleCatsTable(c *gin.Context) {
 	err := new(****_model.MaxiiotSupportArticleCats).CreateTable()
-	obj := gin.H{
+	c.JSON(200, gin.H{
 		"error": err,
-	}
-	controllers.ResponseJSON(c, http.StatusOK, "sucess", obj)
+	})
 }
 //获取列表
 func GetMaxiiotSupportArticleCatsList(c *gin.Context) {
@@ -144,109 +139,19 @@ func GetMaxiiotSupportArticleCatsList(c *gin.Context) {
 		"list":       list,
 		"list_count": count,
 	}
-	controllers.ResponseJSON(c, http.StatusOK, "sucess", obj)
+	c.JSON(200, obj)
 }
-
 //获取单条数据
 func GetMaxiiotSupportArticleCatsById(c *gin.Context) {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-	obj := ****_model.GetMaxiiotSupportArticleCatsById(id)
-	controllers.ResponseJSON(c, http.StatusOK, "sucess", obj)
+	item := ****_model.GetMaxiiotSupportArticleCatsById(id)
+	c.JSON(200, item)
 }
 
 //创建数据
 func CreateMaxiiotSupportArticleCats(c *gin.Context) {
 	item := new(****_model.MaxiiotSupportArticleCats)
 	obj := item.Create()
-	controllers.ResponseJSON(c, http.StatusOK, "sucess", obj)
+	c.JSON(200, obj)
 }
-
-    "/list": {
-      "get": {
-        "summary": "获取列表",
-        "operationId": "MaxiiotSupportArticleCatsList",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/apiEmptyResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-              "description":"列表页序号.",
-              "format":"int32",
-              "in":"query",
-              "name":"page",
-              "required":false,
-              "type":"integer"
-          },
-          {
-              "description":"每页展示数量.",
-              "format":"int32",
-              "in":"query",
-              "name":"per_page",
-              "required":false,
-              "type":"integer"
-          }
-        ],
-        "tags": [
-          "Support"
-        ]
-      }
-    },
-    "/id/{id}": {
-      "get": {
-        "summary": "获取单个服务单",
-        "operationId": "GetMaxiiotSupportArticleCatsById",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/apiEmptyResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-              "format":"int64",
-              "in":"path",
-              "name":"id",
-              "required":true,
-              "type":"string"
-          }
-        ],
-        "tags": [
-          ".."
-        ]
-      }
-    },
-    "/new": {
-      "post": {
-        "summary": "创建新服务单",
-        "operationId": "CreateMaxiiotSupportArticleCats",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/apiEmptyResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/apiEmptyRequest"
-            }
-          }
-        ],
-        "tags": [
-          "***"
-        ]
-      }
-    }
 */

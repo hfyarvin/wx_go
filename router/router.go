@@ -2,6 +2,7 @@ package router
 
 import (
 	"../controllers"
+	"../controllers/db_controller"
 	"../controllers/file_controllers"
 	"../controllers/mail_controllers"
 	"../controllers/pay_controllers"
@@ -77,6 +78,11 @@ func Init(r *gin.Engine) {
 		toolGroup.GET("/redirect_url", tool_controllers.GetRedirectUrl)
 		toolGroup.GET("/base64/test", tool_controllers.Base64Test)
 	}
+
+	//table
+	r.GET("tables/cols", db_controller.AllTabelColumns)
+	r.GET("tables", db_controller.AllTabels)
+	r.GET("gen", db_controller.Gen)
 }
 
 // api_base: https://api.sandbox.paypal.com

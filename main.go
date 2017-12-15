@@ -3,12 +3,14 @@ package main
 import (
 	"./router"
 	"github.com/gin-gonic/gin"
-	// "log"
+	// "log"
+	"./db"
 	"net/http"
 	"time"
 )
 
 func main() {
+	db.Engine, _ = db.NewEngine("mysql", db.MACIIOT_DATABASE)
 	r := gin.Default()
 	r.LoadHTMLGlob("./tmp/*")
 	router.Init(r)

@@ -1,10 +1,9 @@
 package gener
 
 import (
+	"../../common"
 	"fmt"
-	"github.com/maxiiot/LoRaWan/common"
 	log "github.com/sirupsen/logrus"
-	"net/http"
 	"time"
 )
 
@@ -14,8 +13,14 @@ const (
 
 type MaxiiotBillingInvoices struct {
 	Id         int64
+	UserId     int64     `xorm:"user_id not null BIGINT(20)"`
+	Recipient  string    `xorm:"recipient VARCHAR(255)"`
 	TotalPrice int64     `xorm:"total_price not null BIGINT(20)"`
 	Status     int       `xorm:"status default 1 TINYINT(1)"`
+	PayWay     string    `xorm:"pay_way VARCHAR(255)"`
+	OrderId    string    `xorm:"order_id VARCHAR(255)"`
+	Expired    time.Time `xorm:"expired not null DATETIME"`
+	Remark     string    `xorm:"remark VARCHAR(255)"`
 	Created    time.Time `xorm:"created not null DATETIME"`
 	Updated    time.Time `xorm:"updated not null DATETIME"`
 }
@@ -119,21 +124,17 @@ func GetMaxiiotBillingInvoicesBySql(sql string) []*MaxiiotBillingInvoices {
 package ****_controller
 
 import (
-	"github.com/maxiiot/LoRaWan/models/****_model"
-	"net/http"
-	"github.com/maxiiot/LoRaWan/controllers"
+	"../../models/****_model"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
-
 //创建数据表
 func CreateMaxiiotBillingInvoicesTable(c *gin.Context) {
 	err := new(****_model.MaxiiotBillingInvoices).CreateTable()
-	obj := gin.H{
+	c.JSON(200, gin.H{
 		"error": err,
-	}
-	controllers.ResponseJSON(c, http.StatusOK, "sucess", obj)
+	})
 }
 //获取列表
 func GetMaxiiotBillingInvoicesList(c *gin.Context) {
@@ -145,109 +146,19 @@ func GetMaxiiotBillingInvoicesList(c *gin.Context) {
 		"list":       list,
 		"list_count": count,
 	}
-	controllers.ResponseJSON(c, http.StatusOK, "sucess", obj)
+	c.JSON(200, obj)
 }
-
 //获取单条数据
 func GetMaxiiotBillingInvoicesById(c *gin.Context) {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-	obj := ****_model.GetMaxiiotBillingInvoicesById(id)
-	controllers.ResponseJSON(c, http.StatusOK, "sucess", obj)
+	item := ****_model.GetMaxiiotBillingInvoicesById(id)
+	c.JSON(200, item)
 }
 
 //创建数据
 func CreateMaxiiotBillingInvoices(c *gin.Context) {
 	item := new(****_model.MaxiiotBillingInvoices)
 	obj := item.Create()
-	controllers.ResponseJSON(c, http.StatusOK, "sucess", obj)
+	c.JSON(200, obj)
 }
-
-    "/list": {
-      "get": {
-        "summary": "获取列表",
-        "operationId": "MaxiiotBillingInvoicesList",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/apiEmptyResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-              "description":"列表页序号.",
-              "format":"int32",
-              "in":"query",
-              "name":"page",
-              "required":false,
-              "type":"integer"
-          },
-          {
-              "description":"每页展示数量.",
-              "format":"int32",
-              "in":"query",
-              "name":"per_page",
-              "required":false,
-              "type":"integer"
-          }
-        ],
-        "tags": [
-          "Support"
-        ]
-      }
-    },
-    "/id/{id}": {
-      "get": {
-        "summary": "获取单个服务单",
-        "operationId": "GetMaxiiotBillingInvoicesById",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/apiEmptyResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-              "format":"int64",
-              "in":"path",
-              "name":"id",
-              "required":true,
-              "type":"string"
-          }
-        ],
-        "tags": [
-          ".."
-        ]
-      }
-    },
-    "/new": {
-      "post": {
-        "summary": "创建新服务单",
-        "operationId": "CreateMaxiiotBillingInvoices",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/apiEmptyResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/apiEmptyRequest"
-            }
-          }
-        ],
-        "tags": [
-          "***"
-        ]
-      }
-    }
 */
