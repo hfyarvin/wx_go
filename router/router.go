@@ -80,9 +80,16 @@ func Init(r *gin.Engine) {
 	}
 
 	//table
-	r.GET("tables/cols", db_controller.AllTabelColumns)
-	r.GET("tables", db_controller.AllTabels)
-	r.GET("gen", db_controller.Gen)
+	r.GET("/tables/cols", db_controller.AllTabelColumns)
+	r.GET("/tables", db_controller.AllTabels)
+	r.GET("/gen", db_controller.Gen)
+	r.GET("/gen/table/model", db_controller.GenerateTableFile)
+
+	//redis
+	redisGroup := r.Group("/redis")
+	{
+		redisGroup.GET("/ping", db_controller.PingRedis)
+	}
 }
 
 // api_base: https://api.sandbox.paypal.com

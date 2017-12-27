@@ -45,7 +45,7 @@ func Gen(c *gin.Context) {
 }
 
 func writeAFile(str string) error {
-	f, err := os.Create("./controllers/db_controller/s.go")
+	f, err := os.Create("./controllers/db_controller/aaa.go")
 	if err != nil {
 		return err
 	}

@@ -13,7 +13,8 @@ const (
 
 type MaxiiotAccounts struct {
 	Id      int64
-	Name    string    `xorm:"name default 'ss' VARCHAR(255)"`
+	Name    string    `xorm:"name VARCHAR(255)"`
+	Aaaa    time.Time `xorm:"aaaa TIMESTAMP"`
 	Balance float64   `xorm:"balance not null DOUBLE(10)"`
 	Version int       `xorm:"version default 1 INT(11)"`
 	Created time.Time `xorm:"created not null DATETIME(4)"`

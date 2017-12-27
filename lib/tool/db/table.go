@@ -76,7 +76,6 @@ func GetAllColNameByTableName(table string) []*ColAttribute {
 
 //获取构造结构体字段
 func (self *ColAttribute) GetStructStrByCol() string {
-	importStr := "import\t {\n"
 	str := ""
 	upperColName := colUpper(self.ColumnName)
 	dateType := ""
@@ -94,10 +93,8 @@ func (self *ColAttribute) GetStructStrByCol() string {
 		dateType = "string"
 	case "timestamp":
 		dateType = "time.Time"
-		importStr = fmt.Sprintf("%s'%s'\n", importStr, "time")
 	case "datetime":
 		dateType = "time.Time"
-		importStr = fmt.Sprintf("%s'%s'\n", importStr, "time")
 	case "char", "varchar", "tinytext", "text", "mediumtext", "longtext":
 		dateType = "string"
 		defaultStr = fmt.Sprintf("'%s'", defaultStr)
@@ -108,17 +105,24 @@ func (self *ColAttribute) GetStructStrByCol() string {
 	if self.ColumnKey == "PRI" {
 		return fmt.Sprintf("%s\t%s", upperColName, dateType)
 	}
+
 	xormStr := fmt.Sprintf("%s", self.ColumnName)
+
 	if self.ColumnDefault != "" {
-		xormStr := fmt.Sprintf("%s\tdefault %s", defaultStr)
+		xormStr = fmt.Sprintf("%s\tdefault %s", xormStr, defaultStr)
 	}
-	var attr []string
+
+	if self.DataType == "timestamp" {
+		xormStr = fmt.Sprintf("%s\ttimestamp", xormStr)
+	}
 	if self.Extra == "auto_increment" {
-		attr = append(attr, "autoincr")
+		xormStr += fmt.Sprintf("\t%s", "antoincr")
 	}
-	str = fmt.Sprintf("%s\t%s\t`xorm:'%s'\tjson:'%s'`", upperColName, dateType, xormStr, self.ColumnName)
-	importStr = fmt.Sprintf("%s\n}", importStr)
-	fmt.Println(importStr)
+
+	if self.ColumnKey == "UNI" {
+		xormStr += fmt.Sprintf("\t%s", "unique")
+	}
+	str = fmt.Sprintf("%s\t%s\t`xorm:\"%s\"\tjson:\"%s\"`", upperColName, dateType, xormStr, self.ColumnName)
 	return str
 }
 
